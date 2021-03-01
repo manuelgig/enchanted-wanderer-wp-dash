@@ -301,19 +301,23 @@ title_I_1 = Div(text="""<b>I.1. Overview of inventive activity</b>""", height=te
 title_I_2 = Div(text="""<b>I.2. Independent variables / Mediator</b>""", height=textbox_height)
 title_I_3 = Div(text="""<b>I.3. Outcome variables: the value of invention</b>""", height=textbox_height)
 
-title_II_1 = Div(text="""<b>II.1. The relationship between field-original knowledge and recombinant novelty</b>""", height=textbox_height)
-title_II_2 = Div(text="""<b>II.2. Fok, novelty and invention value</b>""", height=textbox_height)
+title_II_1 = Div(text="""<b>II.1. Overview of inventive activity</b>""", height=textbox_height)
+title_II_2 = Div(text="""<b>II.2. Independent variables / Mediator</b>""", height=textbox_height)
+title_II_3 = Div(text="""<b>II.3. Outcome variables: the value of invention</b>""", height=textbox_height)
+
+title_III_1 = Div(text="""<b>III.1. The relationship between field-original knowledge and recombinant novelty</b>""", height=textbox_height)
+title_III_2 = Div(text="""<b>III.2. Fok, novelty and invention value</b>""", height=textbox_height)
 
 # Create panels
 
 tab_1 = Panel(child = column(title_I_1, fig_1_a,
                              title_I_2, gridplot([[fig_1_b, fig_1_c]]),
                              title_I_3, gridplot([[fig_1_d, fig_1_e, fig_1_f]])), title = 'I. Overview')
-tab_2 = Panel(child = column(title_I_1, gridplot([[fig_3_a, fig_3_b, fig_3_c]]),
-                             title_I_2, gridplot([[fig_3_d, fig_3_e]]),
-                             title_I_3, gridplot([[fig_3_f, fig_3_g, fig_3_h]])), title = 'II. Overview by technology sectors')
-tab_3 = Panel(child = column(title_II_1, fig_2_a,
-                             title_II_2, gridplot([[fig_2_b, fig_2_c, fig_2_d]])), title = 'III. Field-original knowledge, novelty and the value of invention')
+tab_2 = Panel(child = column(title_II_1, gridplot([[fig_3_a, fig_3_b, fig_3_c]]),
+                             title_II_2, gridplot([[fig_3_d, fig_3_e]]),
+                             title_II_3, gridplot([[fig_3_f, fig_3_g, fig_3_h]])), title = 'II. Overview by technology sectors')
+tab_3 = Panel(child = column(title_III_1, fig_2_a,
+                             title_III_2, gridplot([[fig_2_b, fig_2_c, fig_2_d]])), title = 'III. Field-original knowledge, novelty and the value of invention')
 tab_4 = Panel(child = column(data_head, data_body, variables_head, variables_body), title = 'IV. Data sources and main variables')
 tab_5 = Panel(child = column(abstract_head, abstract_body), title = 'V. Abstract')
 layout = column(heading,Tabs(tabs=[tab_1, tab_2, tab_3, tab_4, tab_5]))
