@@ -19,11 +19,11 @@ from bokeh.io import output_file, show
 from bokeh.models.mappers import LinearColorMapper
 from bokeh.models import BasicTicker, ColorBar, Range1d, HoverTool,Whisker
 from bokeh.layouts import column, gridplot
-from bokeh.models.widgets import Panel, Tabs
+from bokeh.models.widgets import Panel, Tabs, Div
 
 ###########################################
 ## Load data
-df = pd.read_csv('{}fok.csv'.format(path))
+df = pd.read_csv('{}fok.csv')
 
 ###########################################
 ## Pre-processing
