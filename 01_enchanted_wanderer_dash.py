@@ -295,29 +295,65 @@ inventors with field-original knowledge---i.e., uncommon among others who work i
 
 heading = Div(text="""<p style="font-size:20px"><b>Enchanted Wanderer or Stone Guest? On field-original knowledge and the creativity of invention</b></p><br>
               By Manuel Gigena <br>
-              Interactive dashboard to explore the data from my <a href="https://sites.google.com/view/mgigena/research">working paper</a>.<br><br>""", height=textbox_height)
+              This interactive dashboard is an on-line companion to my <a href="https://sites.google.com/view/mgigena/research">working paper</a> with the 
+              same name, and is meant to facilitate exploration of its unique dataset.<br><br>""", height=textbox_height)
               
 title_I_1 = Div(text="""<b>I.1. Overview of inventive activity</b>""", height=textbox_height)
 title_I_2 = Div(text="""<b>I.2. Independent variables / Mediator</b>""", height=textbox_height)
 title_I_3 = Div(text="""<b>I.3. Outcome variables: the value of invention</b>""", height=textbox_height)
 
+notes_I_1 = Div(text="""There is a steady increase in the number of patents, inventors and assignees over time. 
+                      The number of inventors per assignee also grows, as well as the number of patents filed by each assignee and by each inventor.""",width=200, height=300)
+notes_I_2 = Div(text="""Fok drops slightly over time, especially after 1993.
+                      Inventions in the second half of the sampled period seem to originate in less field-original knowledge.
+                      <br>
+                      Novelty drops sensibly over time, from 0.923 in 1986 to 0.52 in 2000 (a 44% decline).""",width=200, height=200)
+notes_I_3 = Div(text="""The distribution of invention value over time is not homogeneous. The most valuable inventions were created around 
+                    the middle of the sample period (ca. 1992-1998), with highest average value and breakthrough rates, but 
+                      the lowest probability of failure.
+                      <br>
+                      These figures suggest that the risk profile of inventions decreased between 1986 and ca. 1995.""",width=200, height=200)
+                      
 title_II_1 = Div(text="""<b>II.1. Overview of inventive activity</b>""", height=textbox_height)
 title_II_2 = Div(text="""<b>II.2. Independent variables / Mediator</b>""", height=textbox_height)
 title_II_3 = Div(text="""<b>II.3. Outcome variables: the value of invention</b>""", height=textbox_height)
 
+notes_II_1 = Div(text="""The growth of patents, inventors and assignees shows strong differences across technology sectors.
+                 <br>
+                 The largest growth is in 'Computer & Communications'; the smallest, in 'Mechanical'.""",width=180, height=300)
+notes_II_2 = Div(text="""Fok is remarkably stable over time, but there are differences in levels across tech sectors.
+                 <br>
+                 Inventors in 'Drugs & Medical' have the least field-original knowledge (!) (i.e., the most field-specific knowledge, and 
+                 less likely to cross-breed across sectors), and their knowledge tends to get even more field-specific over time.
+                 <br>
+                 'Chemical' has the smallest decrease in novelty over time; 'Drugs & Medical' the largest.
+                 <br><br>
+                 'Computer & Comm.' is the sector with largest growth in the period, but is also the least novel one.""",width=180, height=300)
+notes_II_3 = Div(text="""Changes in value over time are more evident in 'average value' (as measured by forward cites) than in the binary breakthrough/fail dummies.""",width=180, height=300)
+
 title_III_1 = Div(text="""<b>III.1. The relationship between field-original knowledge and recombinant novelty</b>""", height=textbox_height)
 title_III_2 = Div(text="""<b>III.2. Fok, novelty and invention value</b>""", height=textbox_height)
 
+notes_III_1 = Div(text="""The figure plots the average number of new combinations of patents at different quintiles of field-original knowledge.
+                  Inventors with more field-original knowledge create inventions that are more novel on average (i.e., with more new combinations of technological components).""",width=180, height=300)
+notes_III_2 = Div(text="""The heatmaps plot the value measures against quintiles of novelty and field-original knowledge:
+                  <br>
+                  1) Greater novelty is associated with more citations on average, at all levels of fok.
+                  <br>
+                  2) Breakthroughs originate disproportionately in inventors with high fok producing with the largest degree of novelty.
+                  <br>
+                  3) Greater fok is also tied with larger chance of failure (particularly when producing inventions with a low degree of novelty).""",width=180, height=300)
+
 # Create panels
 
-tab_1 = Panel(child = column(title_I_1, fig_1_a,
-                             title_I_2, gridplot([[fig_1_b, fig_1_c]]),
-                             title_I_3, gridplot([[fig_1_d, fig_1_e, fig_1_f]])), title = 'I. Overview')
-tab_2 = Panel(child = column(title_II_1, gridplot([[fig_3_a, fig_3_b, fig_3_c]]),
-                             title_II_2, gridplot([[fig_3_d, fig_3_e]]),
-                             title_II_3, gridplot([[fig_3_f, fig_3_g, fig_3_h]])), title = 'II. Overview by technology sectors')
-tab_3 = Panel(child = column(title_III_1, fig_2_a,
-                             title_III_2, gridplot([[fig_2_b, fig_2_c, fig_2_d]])), title = 'III. Field-original knowledge, novelty and the value of invention')
+tab_1 = Panel(child = column(title_I_1, row(fig_1_a, notes_I_1),
+                             title_I_2, row(gridplot([[fig_1_b, fig_1_c]]),notes_I_2),
+                             title_I_3, row(gridplot([[fig_1_d, fig_1_e, fig_1_f]]), notes_I_3)), title = 'I. Overview')
+tab_2 = Panel(child = column(title_II_1, row(gridplot([[fig_3_a, fig_3_b, fig_3_c]]), notes_II_1),
+                             title_II_2, row(gridplot([[fig_3_d, fig_3_e]]), notes_II_2),
+                             title_II_3, row(gridplot([[fig_3_f, fig_3_g, fig_3_h]]), notes_II_3)), title = 'II. Overview by technology sectors')
+tab_3 = Panel(child = column(title_III_1, row(fig_2_a, notes_III_1),
+                             title_III_2, row(gridplot([[fig_2_b, fig_2_c, fig_2_d]]), notes_III_2)), title = 'III. Field-original knowledge, novelty and the value of invention')
 tab_4 = Panel(child = column(data_head, data_body, variables_head, variables_body), title = 'IV. Data sources and main variables')
 tab_5 = Panel(child = column(abstract_head, abstract_body), title = 'V. Abstract')
 layout = column(heading,Tabs(tabs=[tab_1, tab_2, tab_3, tab_4, tab_5]))
