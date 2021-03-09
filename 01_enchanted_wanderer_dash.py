@@ -24,7 +24,7 @@ from bokeh.models.widgets.markups import Div
 ###########################################
 ## Load data
 df_year = pd.read_csv('csv/df_year.csv')
-df_20 = pd.read_csv('csv/df_200.csv')
+df_20 = pd.read_csv('csv/df_20.csv')
 df_20_fok_nov = pd.read_csv('csv/df_20_fok_nov.csv')
 df_year_nbercat = pd.read_csv('csv/df_year_nbercat.csv')
 df_pyear = df_year[['pyear']]
