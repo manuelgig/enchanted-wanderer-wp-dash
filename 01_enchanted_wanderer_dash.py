@@ -5,69 +5,29 @@ Created on Wed Feb 26 09:59:38 2020
 @author: Manuel G.
 
 This script uses bokeh to create an interactive dashboard to explore the data from my working paper:
-"Enchanted wanderer or stone guest: On field-original knowledge and the creativity of invention"
+"Enchanted wanderer or stone guest? On field-original knowledge and the creativity of invention"
 
 """
 
 # imports
 import pandas as pd
-import numpy as np
 import math
 from bokeh.plotting import ColumnDataSource, figure
 from bokeh.palettes import d3, Viridis256
 from bokeh.io import output_file, show 
 from bokeh.models.mappers import LinearColorMapper
 from bokeh.models import BasicTicker, ColorBar, Range1d, HoverTool,Whisker
-from bokeh.layouts import column, gridplot
-from bokeh.models.widgets import Panel, Tabs, Div
+from bokeh.layouts import column, row, gridplot
+from bokeh.models.widgets import Panel, Tabs
+from bokeh.models.widgets.markups import Div
 
 ###########################################
 ## Load data
-df = pd.read_csv('{}fok.csv')
-
-###########################################
-## Pre-processing
-df.rename(columns={'nr_newpairs_uspc6':'novelty','enters_nf_uspc3_all_2':'enters_nf','wgt_avg_trans_rate_2':'fok','top_100_and_50':'bt','fail_25':'fail'},inplace=True)
-df['log_novelty'] = np.log(df['novelty']+1)
-df['log_cit_10'] = np.log(df['cit_10']+1)
-df['nber_cat'] = df['nber_cat'].replace(np.NaN, 9999).astype(int)
-
-quants = 20
-df['fok_{}'.format(quants)] = df.groupby(['class','pyear'])['fok'].apply(lambda x: pd.qcut(x.rank(method='first'),quants,duplicates='drop',labels=False))
-df['novelty_{}'.format(quants)] = df.groupby(['class','pyear'])['novelty'].apply(lambda x: pd.qcut(x.rank(method='first'),quants,duplicates='drop',labels=False))
-
-# Generate various df's to plot
-df_20 = df[['fok_20','novelty_20']].copy().drop_duplicates().reset_index(drop=True)
-for var in ['bt','fail','log_cit_10']:
-    df_20 = df_20.merge(df.groupby(['fok_20','novelty_20'],as_index=False)[var].mean(),on=['fok_20','novelty_20'])
-    if var=='bt' or var=='fail':
-        df_20[var] = df_20[var]*100
-
-df_year = df.groupby('pyear',as_index=False)[['inventor_id','assignee_id','appln_id']].nunique()
-for i in ['log_novelty','fok','bt','fail','log_cit_10']:
-    df_i = df.groupby('pyear',as_index=False)[i].agg(['mean','count','std'])
-    mean, lower , upper = [], [], []
-    for j in df_i.index:
-        mean_, count_, std_ = df_i.loc[j]
-        mean.append(mean_)
-        lower.append(mean_ - 1.96 * std_ / math.sqrt(count_))
-        upper.append(mean_ + 1.96 * std_ / math.sqrt(count_))
-    df_year[i] = mean
-    df_year['{}_low'.format(i)] = lower
-    df_year['{}_hi'.format(i)] = upper
-    
-df_year_nbercat = df.groupby(['pyear','nber_cat'],as_index=False)[['inventor_id','assignee_id','appln_id']].nunique()
-for i in ['log_novelty','fok','bt','fail','log_cit_10']:
-    df_i = df.groupby(['pyear','nber_cat'],as_index=False)[i].agg(['mean','count','std'])
-    mean, lower , upper = [], [], []
-    for j in df_i.index:
-        mean_, count_, std_ = df_i.loc[j]
-        mean.append(mean_)
-        lower.append(mean_ - 1.96 * std_ / math.sqrt(count_))
-        upper.append(mean_ + 1.96 * std_ / math.sqrt(count_))
-    df_year_nbercat[i] = mean
-    df_year_nbercat['{}_low'.format(i)] = lower
-    df_year_nbercat['{}_hi'.format(i)] = upper
+df_year = pd.read_csv('df_year.csv')
+df_20 = pd.read_csv('df_20.csv')
+df_20_fok_nov = pd.read_csv('df_20_fok_nov.csv')
+df_year_nbercat = pd.read_csv('df_year_nbercat.csv')
+df_pyear = df_year[['pyear']]
 
 ###########################################
 # Palettes
@@ -123,7 +83,7 @@ for fig in [fig_1_c, fig_1_d, fig_1_e, fig_1_f]:
     
 ### Tab II: overview by NBER tech categories
 # fig_3_a - fig_3_c, 
-nber_cats_dict = {1: 'Chemical', 2:'Computer &Communications', 3: 'Drugs & Medical', 4:'Eletrical & Electronic', 5:'Mechanical', 6:'Other', 9999:'NA'}
+nber_cats_dict = {1: 'Chemical', 2:'Computer & Comm.', 3: 'Drugs & Medical', 4:'Eletrical & Electronic', 5:'Mechanical', 6:'Other', 9999:'NA'}
 var = ['appln_id','inventor_id','assignee_id']
 varnames = ['Patents','Inventors','Assignees']
 plot_size = [(round(1000/3),400),(round(1000/3),400),(570,400)]
@@ -131,9 +91,10 @@ color = d3['Category10'][7]
 plots = []
 sources_nbercat = []
 nbercats = list(df_year_nbercat.nber_cat.unique())
+
 for i in range(3):
     plots.append(figure(title=varnames[i], x_axis_label='Year', plot_width=plot_size[i][0], plot_height=plot_size[i][1]))
-    df_i = df[['pyear']].drop_duplicates().sort_values('pyear').reset_index(drop=True)
+    df_i = df_pyear
     for nbercat in nbercats:
         df_i = df_i.merge(df_year_nbercat[df_year_nbercat['nber_cat']==nbercat][['pyear',var[i]]], on='pyear').rename(columns={'{}'.format(var[i]):'{}_nbercat_{}'.format(var[i],nbercat)})
     sources_nbercat.append(ColumnDataSource(df_i))
@@ -162,7 +123,6 @@ color = d3['Category10'][7]
 plots = []
 sources_nbercat = []
 nbercats = list(df_year_nbercat.nber_cat.unique())
-df_pyear = df[['pyear']].drop_duplicates().sort_values('pyear').reset_index(drop=True)
 for i in range(5):
     plots.append(figure(title=varnames[i], x_axis_label='Year', plot_width=plot_size[i][0], plot_height=plot_size[i][1]))
     df_i = df_pyear.copy()
@@ -196,14 +156,7 @@ for fig in [fig_3_e, fig_3_f, fig_3_g, fig_3_h]:
     fig.x_range = fig_3_d.x_range
     
 ### Tab III: fok and novelty
-df_20_fok_nov = df.groupby('fok_20',as_index=False)['log_novelty'].agg(['mean','count','std']).rename(columns={'mean':'log_novelty'})
-low , high = [], []
-for i in df_20_fok_nov.index:
-    mean, count, std = df_20_fok_nov.loc[i]
-    low.append(mean - 1.96 * std / math.sqrt(count))
-    high.append(mean + 1.96 * std / math.sqrt(count))
-df_20_fok_nov['lower'] = low
-df_20_fok_nov['upper'] = high
+
 
 # Figure 2_a: Fok y novelty
 source_df_20_fok_nov = ColumnDataSource(df_20_fok_nov)
@@ -291,7 +244,7 @@ inventors with field-original knowledge---i.e., uncommon among others who work i
   Caution is due because the rate of failure increases as well, suggesting uncertainty, rather than recombinant fertility or displaced expertise,
   is the driving mechanism. </p>""", width=800, height=300)
 
-# headings and titles
+# headings, titles and notes
 
 heading = Div(text="""<p style="font-size:20px"><b>Enchanted Wanderer or Stone Guest? On field-original knowledge and the creativity of invention</b></p><br>
               By Manuel Gigena <br>
@@ -359,5 +312,5 @@ tab_5 = Panel(child = column(abstract_head, abstract_body), title = 'V. Abstract
 layout = column(heading,Tabs(tabs=[tab_1, tab_2, tab_3, tab_4, tab_5]))
 
 # Output file and show
-output_file('{}main.html'.format(path))
+output_file('main.html')
 show(layout)
