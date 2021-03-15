@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Feb 26 09:59:38 2020
+Created on Wed Feb 26 09:59:38 1021
 
 @author: Manuel G.
 
@@ -14,12 +14,14 @@ import pandas as pd
 import math
 from bokeh.plotting import ColumnDataSource, figure
 from bokeh.palettes import d3, Viridis256
-from bokeh.io import output_file, show 
+from bokeh.io import output_file, show, curdoc
 from bokeh.models.mappers import LinearColorMapper
 from bokeh.models import BasicTicker, ColorBar, Range1d, HoverTool,Whisker
-from bokeh.layouts import column, row, gridplot
-from bokeh.models.widgets import Panel, Tabs
+from bokeh.layouts import column, row, gridplot, widgetbox
+from bokeh.models.widgets import Panel, Tabs, Button
 from bokeh.models.widgets.markups import Div
+import sys
+
 
 ###########################################
 ## Load data
@@ -210,6 +212,12 @@ for fig in fig_2_c, fig_2_d:
     fig.x_range = fig_2_b.x_range
     fig.y_range = fig_2_b.y_range
 
+#  Button to stop the server
+def button_callback():
+    sys.exit()  # Stop the server
+button = Button(label="Stop bokeh server", button_type="success", visible=False)
+button.on_click(button_callback)
+
 textbox_height = 100
 
 # Tab 4: Data sources and main variables
@@ -308,9 +316,10 @@ tab_2 = Panel(child = column(title_II_1, row(gridplot([[fig_3_a, fig_3_b, fig_3_
 tab_3 = Panel(child = column(title_III_1, row(fig_2_a, notes_III_1),
                              title_III_2, row(gridplot([[fig_2_b, fig_2_c, fig_2_d]]), notes_III_2)), title = 'III. Field-original knowledge, novelty and the value of invention')
 tab_4 = Panel(child = column(data_head, data_body, variables_head, variables_body), title = 'IV. Data sources and main variables')
-tab_5 = Panel(child = column(abstract_head, abstract_body), title = 'V. Abstract')
+tab_5 = Panel(child = column(abstract_head, abstract_body,widgetbox(button, align="center")), title = 'V. Abstract')
 layout = column(heading,Tabs(tabs=[tab_1, tab_2, tab_3, tab_4, tab_5]))
 
 # Output file and show
-output_file('main.html')
-show(layout)
+bokeh_doc = curdoc()
+bokeh_doc.add_root(layout)
+bokeh_doc.title='Enchanted Wanderer or Stone Guest?'
