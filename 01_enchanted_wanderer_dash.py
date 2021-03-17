@@ -52,10 +52,20 @@ source_counts_class_pyear = ColumnDataSource(df_year)
 fig_1_a = figure(title='Evolution', x_axis_label='Year',plot_width=1000, plot_height=300)
 plots = []
 for i in range(3):
-    fig_1_a.line(x='pyear',y=var[i], source=source_counts_class_pyear, legend_label=varnames[i], color=color[i])
-    plots.append(fig_1_a.circle(x='pyear',y=var[i], source=source_counts_class_pyear, size=10, fill_color=color[i], line_color='white',alpha=.1,
-                              hover_fill_color=color[i], hover_alpha=.5, hover_line_color='white'))
-    fig_1_a.add_tools(HoverTool(renderers=[plots[i]], tooltips=[('Year','@pyear'),(varnames[i], '@{}'.format(var[i]))], mode='mouse'))
+    fig_1_a.line(x='pyear', y=var[i],
+                 source=source_counts_class_pyear,
+                 legend_label=varnames[i],
+                 color=color[i])
+    plots.append(fig_1_a.circle(x='pyear',y=var[i],
+                                source=source_counts_class_pyear,
+                                size=10,
+                                fill_color=color[i],
+                                line_color='white',
+                                alpha=.1,
+                                hover_fill_color=color[i], hover_alpha=.5, hover_line_color='white'))
+    fig_1_a.add_tools(HoverTool(renderers=[plots[i]],
+                                tooltips=[('Year','@pyear'),(varnames[i], '@{}'.format(var[i]))],
+                                mode='mouse'))
     #fig.tools[0].renderers.append(circle)
 fig_1_a.legend.location='top_left'
 
@@ -67,14 +77,25 @@ plot_size = [(500,200),(500,200),(round(1000/3),200),(round(1000/3),200),(round(
 color = palette[3:]
 plots = []
 for i in range(5):
-    plots.append(figure(title=varnames[i], x_axis_label='Year', plot_width=plot_size[i][0], plot_height=plot_size[i][1]))
-    plots[i].y_range=Range1d(source_counts_class_pyear.data['{}_low'.format(var[i])].min()*.98, source_counts_class_pyear.data['{}_hi'.format(var[i])].max()*1.02)
-    plots[i].line(x='pyear', y=var[i], source=source_counts_class_pyear, color=color[i])
-    w = Whisker(source=source_counts_class_pyear, base="pyear", upper="{}_hi".format(var[i]), lower="{}_low".format(var[i]), level="overlay", line_color=color[i])
+    plots.append(figure(title=varnames[i],
+                        x_axis_label='Year',
+                        plot_width=plot_size[i][0],
+                        plot_height=plot_size[i][1]))
+    plots[i].y_range=Range1d(source_counts_class_pyear.data['{}_low'.format(var[i])].min()*.98,
+                             source_counts_class_pyear.data['{}_hi'.format(var[i])].max()*1.02)
+    plots[i].line(x='pyear', y=var[i],
+                  source=source_counts_class_pyear,
+                  color=color[i])
+    w = Whisker(source=source_counts_class_pyear
+                base="pyear", upper="{}_hi".format(var[i]),
+                lower="{}_low".format(var[i]),
+                level="overlay",
+                line_color=color[i])
     w.upper_head.line_color = color[i]
     w.lower_head.line_color = color[i]
     plots[i].add_layout(w)    
-    plots[i].add_tools(HoverTool(tooltips=[('Year','@pyear'),(varnames[i], '@{}'.format(var[i]))], mode='vline'))
+    plots[i].add_tools(HoverTool(tooltips=[('Year','@pyear'),(varnames[i], '@{}'.format(var[i]))],
+                                 mode='vline'))
 fig_1_b = plots[0]
 fig_1_c = plots[1]
 fig_1_d = plots[2]
@@ -95,14 +116,21 @@ sources_nbercat = []
 nbercats = list(df_year_nbercat.nber_cat.unique())
 
 for i in range(3):
-    plots.append(figure(title=varnames[i], x_axis_label='Year', plot_width=plot_size[i][0], plot_height=plot_size[i][1]))
+    plots.append(figure(title=varnames[i]
+                        x_axis_label='Year',
+                        plot_width=plot_size[i][0],
+                        plot_height=plot_size[i][1]))
     df_i = df_pyear
     for nbercat in nbercats:
         df_i = df_i.merge(df_year_nbercat[df_year_nbercat['nber_cat']==nbercat][['pyear',var[i]]], on='pyear').rename(columns={'{}'.format(var[i]):'{}_nbercat_{}'.format(var[i],nbercat)})
     sources_nbercat.append(ColumnDataSource(df_i))
+    
     for j,nbercat in enumerate(nbercats):
-        plots[i].line(x='pyear', y='{}_nbercat_{}'.format(var[i],nbercat), source=sources_nbercat[i], color=color[j],legend_label='{}'.format(nber_cats_dict[nbercat]), line_width=1.5)
-        plots[i].circle(x='pyear', y='{}_nbercat_{}'.format(var[i],nbercat), source=sources_nbercat[i], size=10, fill_color=color[j], line_color='white', alpha=.1,
+        plots[i].line(x='pyear', y='{}_nbercat_{}'.format(var[i],nbercat),
+                      source=sources_nbercat[i], color=color[j],legend_label='{}'.format(nber_cats_dict[nbercat]), line_width=1.5)
+        plots[i].circle(x='pyear', y='{}_nbercat_{}'.format(var[i],nbercat),
+                        source=sources_nbercat[i],
+                        size=10, fill_color=color[j], line_color='white', alpha=.1,
                         hover_alpha=.5)
         plots[i].add_tools(HoverTool(tooltips=[('Year','@pyear'),
                                                ('Count', '@{}_nbercat_{}'.format(var[i],nbercat))], mode='mouse'))
@@ -135,11 +163,17 @@ for i in range(5):
                                                                                                                                             '{}_hi'.format(var[i]): '{}_hi_nbercat_{}'.format(var[i],nbercat)})
     sources_nbercat.append(ColumnDataSource(df_i))
     ymin, ymax = df_year_nbercat['{}_low'.format(var[i])].min(), df_year_nbercat['{}_hi'.format(var[i])].max()
+    
     for j,nbercat in enumerate(nbercats):
         plots[i].y_range=Range1d(ymin*.98, ymax*1.02)
-        plots[i].line(x='pyear', y='{}_nbercat_{}'.format(var[i],nbercat), source=sources_nbercat[i],
-                      line_width=1.5, line_color=color[j], legend_label='{}'.format(nber_cats_dict[nbercat]), name='y{}'.format(j))
-        w = Whisker(source=sources_nbercat[i], base="pyear", upper='{}_hi_nbercat_{}'.format(var[i],nbercat), lower='{}_low_nbercat_{}'.format(var[i],nbercat), level="overlay", line_color=color[j])
+        plots[i].line(x='pyear', y='{}_nbercat_{}'.format(var[i],nbercat),
+                      source=sources_nbercat[i],
+                      line_width=1.5, line_color=color[j],
+                      legend_label='{}'.format(nber_cats_dict[nbercat]), name='y{}'.format(j))
+        w = Whisker(source=sources_nbercat[i],
+                    base="pyear",
+                    upper='{}_hi_nbercat_{}'.format(var[i],nbercat), lower='{}_low_nbercat_{}'.format(var[i],nbercat),
+                    level="overlay", line_color=color[j])
         w.upper_head.line_color = color[j]
         w.lower_head.line_color = color[j]
         plots[i].add_layout(w)
@@ -162,17 +196,24 @@ for fig in [fig_3_e, fig_3_f, fig_3_g, fig_3_h]:
 
 # Figure 2_a: Fok y novelty
 source_df_20_fok_nov = ColumnDataSource(df_20_fok_nov)
+
 color = palette[0]
-fig_2_a = figure(x_axis_label='Quintiles of field-original knowledge', y_axis_label='New combinations (log)',plot_width=1000, plot_height=300)
-fig_2_a.line(x='fok_20',y='log_novelty',source=source_df_20_fok_nov, color=color)
-plot = fig_2_a.circle(x='fok_20', y='log_novelty', source = source_df_20_fok_nov, size=5, fill_color=color, line_color='white', alpha=.1,
-                    hover_fill_color = color, hover_alpha=.5, hover_line_color='white')
-w = Whisker(source=source_df_20_fok_nov, base="fok_20", upper="upper", lower="lower", level="overlay", line_color=color)
+
+fig_2_a = figure(x_axis_label='Quintiles of field-original knowledge',
+                 y_axis_label='New combinations (log)',
+                 plot_width=1000, plot_height=300)
+fig_2_a.line(x='fok_20',y='log_novelty',
+             source=source_df_20_fok_nov, color=color)
+plot = fig_2_a.circle(x='fok_20', y='log_novelty',
+                      source = source_df_20_fok_nov, size=5,
+                      fill_color=color, line_color='white', alpha=.1,
+                      hover_fill_color = color, hover_alpha=.5, hover_line_color='white')
+w = Whisker(source=source_df_20_fok_nov,
+            base="fok_20", upper="upper", lower="lower", level="overlay", line_color=color)
 w.upper_head.line_color = color
 w.lower_head.line_color = color
 fig_2_a.add_layout(w)
 fig_2_a.add_tools(HoverTool(renderers=[plot], tooltips=[('Fok quintile','@fok_20'),('Avg.','@log_novelty')], mode='vline'))
-#show(fig_2_a)
 
 # Figure 2_b - : scatter plot de bt
 TOOLS = "hover,save,pan,box_zoom,reset,wheel_zoom"
@@ -197,8 +238,12 @@ for i in range(3):
     scatters[i].axis.major_label_standoff = 0
     scatters[i].xaxis.major_label_orientation = math.pi / 3
     
-    scatters[i].rect(x="fok_20", y="novelty_20", width=1, height=1,source=source_df_20,fill_color={'field': var[i], 'transform': mappers[i]},line_color=None)    
-    color_bar = ColorBar(color_mapper=mappers[i], major_label_text_font_size="7px",ticker=BasicTicker(desired_num_ticks=len(colors)),
+    scatters[i].rect(x="fok_20", y="novelty_20"
+                     width=1, height=1,
+                     source=source_df_20,
+                     fill_color={'field': var[i], 'transform': mappers[i]},line_color=None)    
+    color_bar = ColorBar(color_mapper=mappers[i],
+                         major_label_text_font_size="7px",ticker=BasicTicker(desired_num_ticks=len(colors)),
                          #formatter=PrintfTickFormatter(format="%d%%"),
                          label_standoff=6, border_line_color=None)
     scatters[i].add_layout(color_bar, 'right')
@@ -309,14 +354,19 @@ notes_III_2 = Div(text="""The heatmaps plot the value measures against quintiles
 
 tab_1 = Panel(child = column(title_I_1, row(fig_1_a, notes_I_1),
                              title_I_2, row(gridplot([[fig_1_b, fig_1_c]]),notes_I_2),
-                             title_I_3, row(gridplot([[fig_1_d, fig_1_e, fig_1_f]]), notes_I_3)), title = 'I. Overview')
+                             title_I_3, row(gridplot([[fig_1_d, fig_1_e, fig_1_f]]), notes_I_3)),
+              title = 'I. Overview')
 tab_2 = Panel(child = column(title_II_1, row(gridplot([[fig_3_a, fig_3_b, fig_3_c]]), notes_II_1),
                              title_II_2, row(gridplot([[fig_3_d, fig_3_e]]), notes_II_2),
-                             title_II_3, row(gridplot([[fig_3_f, fig_3_g, fig_3_h]]), notes_II_3)), title = 'II. Overview by technology sectors')
+                             title_II_3, row(gridplot([[fig_3_f, fig_3_g, fig_3_h]]), notes_II_3)),
+              title = 'II. Overview by technology sectors')
 tab_3 = Panel(child = column(title_III_1, row(fig_2_a, notes_III_1),
-                             title_III_2, row(gridplot([[fig_2_b, fig_2_c, fig_2_d]]), notes_III_2)), title = 'III. Field-original knowledge, novelty and the value of invention')
-tab_4 = Panel(child = column(data_head, data_body, variables_head, variables_body), title = 'IV. Data sources and main variables')
-tab_5 = Panel(child = column(abstract_head, abstract_body,widgetbox(button, align="center")), title = 'V. Abstract')
+                             title_III_2, row(gridplot([[fig_2_b, fig_2_c, fig_2_d]]), notes_III_2)),
+              title = 'III. Field-original knowledge, novelty and the value of invention')
+tab_4 = Panel(child = column(data_head, data_body, variables_head, variables_body),
+              title = 'IV. Data sources and main variables')
+tab_5 = Panel(child = column(abstract_head, abstract_body,widgetbox(button, align="center")),
+              title = 'V. Abstract')
 layout = column(heading,Tabs(tabs=[tab_1, tab_2, tab_3, tab_4, tab_5]))
 
 # Output file and show
