@@ -49,7 +49,10 @@ color = palette[:3]
 tools_to_show = 'hover,box_zoom,pan,save,reset,wheel_zoom'
 
 source_counts_class_pyear = ColumnDataSource(df_year)
-fig_1_a = figure(title='Evolution', x_axis_label='Year',plot_width=1000, plot_height=300)
+fig_1_a = figure(title='Evolution',
+                 x_axis_label='Year',
+                 plot_width=1000,
+                 plot_height=300)
 plots = []
 for i in range(3):
     fig_1_a.line(x='pyear', y=var[i],
